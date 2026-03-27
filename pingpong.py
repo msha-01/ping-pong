@@ -29,27 +29,44 @@ class Player(GameSprite):
             self.rect.y += self.speed
 
 class Ball(GameSprite):
-    def update(self, speed_x, speed_y):
-        self.rect.x += speed_x
-        self.rect.y += speed_y
-
+    speed_x = 4
+    speed_y = 4
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+        if self.rect.y > 450 or self.rect.y < 0:
+            self.speed_y *= -1
+        if sprite.collide_rect(self, platform1) or sprite.collide_rect(self, platform2):
+            self.speed_x *= -1
     
 platform1 = Player('platform1.png', 10, 200, 6, 50, 150)
 platform2 = Player('platform2.png', 640, 200, 6, 50, 150)
 ball = Ball('ball.png', 300, 200, 7, 50, 50)
+font.init()
+win1 = font.SysFont('Arial', 50).render('первый игрок выиграл', True, (0, 255, 0))
+win2 = font.SysFont('Arial', 50).render('второй игрок выиграл', True, (0, 255, 0))
+
 
 game = True
+finish = False
 while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
-    window.fill((255, 255, 255))
+    if finish != True:
+        window.fill((255, 255, 255))
+        if ball.rect.x > 650:
+            window.blit(win1, (200, 200))
+            finish = True
+        elif ball.rect.x < 0:
+            window.blit(win2, (200, 200))
+            finish = True
 
-    platform1.update1()
-    platform1.reset()
-    platform2.update2()
-    platform2.reset()
-    ball.update(4, 4)
-    ball.reset()
-    display.update()
+        platform1.update1()
+        platform1.reset()
+        platform2.update2()
+        platform2.reset()
+        ball.update()
+        ball.reset()
+        display.update()
     clock.tick(60)
